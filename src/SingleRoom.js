@@ -14,7 +14,7 @@ export default class SingleRoom extends React.Component {
             insertMode: 'append',
             width: '100%',
             height: '100%',
-            videoSource: "screen",
+            videoSource: "video",
             publishAudio: true,
         }
 
@@ -71,7 +71,7 @@ export default class SingleRoom extends React.Component {
     render() {
         console.log("rendering..")
         if (this.state.sessionId === null) return null
-            console.log(this.state)
+        console.log(this.state)
         return (
             <div className="publisher" >
                 <h2>{this.props.room.title}</h2>
