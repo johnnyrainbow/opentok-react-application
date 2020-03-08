@@ -1,6 +1,5 @@
 import React from 'react'
 import config from "./config.json"
-import { OTSession, OTPublisher, OTStreams, OTSubscriber } from 'opentok-react';
 const OT = require('@opentok/client');
 export default class SingleRoom extends React.Component {
     constructor(props) {
@@ -19,12 +18,47 @@ export default class SingleRoom extends React.Component {
         }
 
     }
+    handleError(error) {
+        if (error) {
+            alert(error.message);
+        }
+    }
     async componentDidMount() {
         const broadcast = await this.getBroadcast()
         if (!broadcast) return
 
         const token = await this.getAppropriateToken(broadcast.id)
         this.setState({ token, sessionId: broadcast.sessionId })
+        var session = OT.initSession(config.TOK_API_KEY, this.state.sessionId);
+        // var publisher = OT.initPublisher('publisher', {
+        //     insertMode: 'append',
+        //     width: '100%',
+        //     height: '100%',
+        //     videoSource: "screen",
+        //     audioSource: true
+        // }, this.handleError);
+        session.connect(token, function (error) {
+            console.log("connecting session")
+            const result = Promise.all([
+                OT.getUserMedia({
+                    videoSource: 'screen'
+                }),
+                OT.getUserMedia({
+                    videoSource: null
+                })
+            ])
+                .then(([screenStream, micStream]) => {
+                    const publisher = OT.initPublisher("publisher", {
+                        videoSource: screenStream.getVideoTracks()[0],
+                        audioSource: micStream.getAudioTracks()[0]
+                    });
+
+
+                    // If the connection is successful, publish to the session
+                    session.publish(publisher, (error) => alert(error.message));
+                });
+        })
+
     }
 
     async getBroadcastToken(broadcastId, type) {
@@ -76,12 +110,6 @@ export default class SingleRoom extends React.Component {
             <div className="publisher" >
                 <h2>{this.props.room.title}</h2>
 
-                <OTSession apiKey={config.TOK_API_KEY} sessionId={this.state.sessionId} token={this.state.token}>
-                    <OTPublisher
-                        properties={this.publisherProperties}
-                        eventHandlers={this.publisherEventHandlers}
-                    />
-                </OTSession>
 
             </div >
         )
