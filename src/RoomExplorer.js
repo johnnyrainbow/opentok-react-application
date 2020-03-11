@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import Room from "./Room"
 import config from "./config.json"
+import ReactDOM from 'react-dom';
+import CreateRoom from './CreateRoom';
+
 export default class RoomExplorer extends Component {
   constructor(props) {
     super(props)
@@ -9,7 +12,7 @@ export default class RoomExplorer extends Component {
       rooms: []
     }
   }
-  
+
   componentDidMount() {
     this.getRooms()
   }
@@ -24,10 +27,13 @@ export default class RoomExplorer extends Component {
     console.log(data)
     this.setState({ rooms: data.rooms })
   }
-
+  createRoom() {
+    ReactDOM.render(<CreateRoom />, document.getElementById('root'));
+  }
   render() {
     return (
-      <div className="App" >
+      <div className="App">
+        <button onClick={this.createRoom}>Create Room</button>
         {
           this.state.rooms.map(room => (
             <Room
@@ -36,6 +42,7 @@ export default class RoomExplorer extends Component {
             />
           ))
         }
+
       </div >
     );
   }
