@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Tokbox react implementation to connect against streaming api
 
 ## Available Scripts
 
